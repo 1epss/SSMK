@@ -1,13 +1,13 @@
 #import "template.typ": *
 #import "fitheight.typ": *
+#import "@preview/codelst:2.0.0": sourcecode
 
 #show: project.with(
   title: "HASH: A FORTRAN Program for Computing Earthquake First Motion Focal Mechanisms",
   authors: (
     "Silent gyuu",
   ),
-  main: "image/main.png"
-)
+  main: "image/main.png")
 
 #show <r>: set text(red)
 
@@ -33,7 +33,7 @@
           full:false,
           indent:1em)
           
-#set list(marker: ([＃], [-]),
+#set list(marker: ([＃], [-], [-]),
           //body-indent: 1em//
           indent:0.4em)
 
@@ -121,7 +121,46 @@
 - Computing Focal Mechanisms
  - 메인 코드는 주로 입/출력을 처리하며, 각 이벤트의 단층면해의 계산은 메인 코드에서 호출되는 세 서브루틴을 통해 수행됨 \ #zz 이 서브루틴들에 전달되는 배열에 가지고 있는 데이터의 형식을 가장 효율적으로 맞추기 위해, 메인 코드를 수정해야 함
 - Computing the set of acceptable mechanisms 
- - 
+ - S/P 진폭비를 P파의 초동 극성과 함께 사용할 것인지 여부에 따라 별개의 유사한 서브루틴이 사용됨 \ #zz 양쪽의 서브루틴에는 관측소들의 P파 초동 극성, S/P파 진폭비, 방위각과 출발각이 입력값으로 들어감 \ #zz 입력값들의 불확실성 추정치 또한 단층면해의 안정성을 테스트하는데 필요함   
+ - 방위각과 출발각의 불확실성은 서로 다른 진원 깊이, 속도 구조모델에 대해 반복적인 계산 시도에서 얻은 합리적인 수치들로 나타남 \ #zz 예를 들어 5번째 시도의 경우, 진원 위치와 속도 구조모델은 고정되어 있고, 7번째 관측소에 대한 방위각과 출발각은 각각 `p_azi_mc(7,5)`, `p_the_mc(7.5)` 에 저장되며, 8번째 관측소는 `p_azi_mc(8,5)`, `p_the_mc(8,5)` 에 저장됨 \ #zz 초동의 극성과 발췌 정확도, S/P 진폭비는 각각의 시도에서 같은 값을 가지며, 7번째 관측소에 대해 각각 `p_pol(7)`, `p_qual(7)`, `sp_amp(7)` 에 저장되게 됨 \ #zz 시도 횟수와 관측소의 개수는 각각 `nmc`, `npsta`에서 정의 \ #zz 각각의 시도 간에 적합한 단층면해들이 만들어질 것이며, 그것들을 결합하여 대상 지진에 대해 적합한 단층면해들을 생성
+ - P파의 초동 피크의 불확실성은 얼마나 많은 극성 오차가 허용 가능한지에 따라 설명될 수 있음 \ #zz 결과값으로 나온 적합한 단층면해들은 이러한 미스핏 극성들을 포함한 해로 여길 수 있음 \ #zz 허용된 미스핏 극성의 수는 최적의 해가 가지는 미스핏 극성의 수에 추가로 `nextra` 를 더한 값으로 정의됨 \ #zz 만약 이 허용된 미스핏 극성의 수가 `ntotal`보다 적다면, `ntotal`이 허용된 미스핏의 수로 사용됨 \ #zz 일반적으로 `ntotal` 값은 극성의 총 개수와 네트워크의 알려진 극성 오차의 비율을 곱한 값을 이용해, 극성 미스핏 수를 예상할 수 있음 \ #zz 주로 `ntotal`의 절반인 `nextra`를 사용함 \ #zz 또한, S/P 진폭비의 경우 허용가능한 $log_10 (S"/"P)$ 미스핏은 최적의 해의 미스핏에 `qextra`를 더한 값으로 정의하며, 이게 `qtotal`보다 작으면 `qtotal`을 사용 \ #zz 일반적으로 `qtotal`은 S/P 진폭비의 총 개수에 평균 불확실성 추정치를 곱한 값이며, `qextra`는 `qtotal`의 절반
+ - `dang` 은 격자 검색의 정밀도를 나타내는 파라미터이며, `maxout`은 적합한 단층면해들의 최대 개수를 설정하는 파라미터
+ - 찾아낸 적합한 단층면해의 총 개수는 `nf`로 표시되지만, 최대 개수는 `maxout`으로 제한됨 \ #zz 각각의 적합한 단층면해에 대해, 단층면해에 관련된 파라미터와 두 Nodal plane의 법선 벡터가 반환됨
+ - P파의 초동 극성만 이용할 경우 `FOCALMC` 서브루틴을 이용하며, 다음과 같은 입/출력값을 가짐 \ 
+  #sourcecode[
+    ```Fortran
+    subroutine FOCALMC(p_azi_mc, p_the_mc, p_pol, p_qual, npsta, nmc, dang, maxout, nextra,
+    ntotal, nf, strike, dip, rake, faults, slips)
+    ```]
+  - Inputs
+   #list(marker: ([•]),
+  [p_azi_mc(npsta, nmc) : 방위각],
+  [p_the_mc(npsta, nmc) : 출발각],
+  [p_pol(npsta) : 초동 극성(1 = up, -1 = down)],
+  [p_qual(npsta) : 초동 quality(0 = 펄스, 1 = 점진적)],
+  [npsta : 관측한 초동의 수],
+  [nmc : 시도 횟수(주어진 각 관측소에서의 방위각-출발각 쌍의 수)],
+  [dang : 격자 검색에서의 각도 간격(Degree)],
+  [maxout : 반환되는 단층 면의 최대 개수(만약 더 발견된다면, 랜덤한 값이 리턴)],
+  [nextra : 허용되는 추가 미스핏의 수],
+  [ntotal : 허용되는 총 미스핏의 최소 개수],
+  )
+  - Outputs
+   #list(marker: ([•]),
+   [nf : 찾아낸 단층면해의 수],
+   [strike(min(maxout, nf)) : 주향],
+   [dip(min(maxout, nf)) : 경사],
+   [rake(min(maxout, nf)) : 미끌림각],
+   [faults(3, min(maxout, nf)) : 단층의 법선 벡터],
+   [slips(3, min(maxout, nf)) : Slip 벡터],
+   )
+ - P파의 초동 극성과 S/P 진폭비를 모두 이용할 경우 `FOCALAMP_MC` 서브루틴을 이용
+  #sourcecode[
+    ```Fortran
+    subroutine FOCALAMP_MC(p_azi_mc, p_the_mc, sp_amp, p_pol, npsta, nmc, dang, maxout, nextra,
+    ntotal, qextra, qtotal, nf, strike, dip, rake, faults, slips)
+    ```]
+    
 - Computing the preferred, or most probable, mechanism
 
 - Computing the data misfit for the preferred mech
