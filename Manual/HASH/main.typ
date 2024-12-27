@@ -56,23 +56,75 @@
 = Overview
 - Overview
  - HASH 디렉토리에는 다음과 같은 파일들이 존재해야 합니다.
+ - Source code
   #list(marker:([•]),
-  [hash_driver1.f, hash_driver2.f, hash_driver3.f : ],
-  [hash_driver4.f, hash_driver5.f],
-  [fmamp_subs.f],
-  [fmech_subs.f],
-  [pol_subs.f],
-  [station_subs.f],
-  [station_subs_5char.f],
-  [uncert_subs.f],
-  [utils_subs.f],
-  [vel_subs.f]
-)
+  [hash_driver1.f, hash_driver2.f, hash_driver3.f : 메인 코드의 예시],
+  [hash_driver4.f : 새로 추가된 예시, 2008년 1월 기준 SCEDC 형식 및 5글자의 관측소 이름을 가짐],
+  [hash_driver5.f : 새로 추가된 예시, 3차원 파선 트레이싱에 사용되는 SIMULPS 형식],
+  [fmamp_subs.f : P파의 초동 극성과 S/P 진폭비를 이용해 단층면해를 계산하는 서브루틴],
+  [fmech_subs.f : P파의 초동 극성만을 이용해 단층면해를 계산하는 서브루틴],
+  [pol_subs.f : 초동 극성의 분포와 미스핏을 계산하는 서브루틴],
+  [station_subs.f : 관측소의 위치와 극성의 반전 여부를 계산하는 서브루틴],
+  [station_subs_5char.f : 새로 추가된 서브루틴, 5글자의 이름을 가지는 관측소 대상],
+  [uncert_subs.f : 단층면해의 불확실성을 계산하는 서브루틴],
+  [utils_subs.f : 기타 유틸리티를 포함한 서브루틴],
+  [vel_subs.f : 속도 구조모델 테이블을 계산하는 서브루틴])
+ - Include files
+  #list(marker:([•]),
+  [param.inc : 배열의 크기를 조절하기 위한 파라미터들],
+  [hash_driver4.f : 단층면해를 결정하는데 필요한 격자의 간격 결정],
+  [hash_driver5.f : 속도 구조모델 테이블 파라미터],)
+ - Makefile
+ - Example control files
+  #list(marker: ([•]),
+  [example1.inp : P파의 초동 극성만을 이용한 예시에 사용, 출발각의 불확실성을 직접 입력],
+  [example2.inp : P파의 초동 극성만을 이용한 예시에 사용, 1차원 속도 구조모델들을 이용해 출발각의 불확실성을 입력],
+  [example3.inp : P파의 초동 극성과 S/P 진폭비를 이용한 예시에 사용, 1차원 속도 구조모델들을 이용해 출발각의 불확실성을 입력],
+  [example4.inp : 새로 추가된 예시, example2.inp와 같지만 갱신된 SCEDC의 양식을 따름],
+  [example5.inp : 새로 추가된 예시, example2.inp와 같지만 SIMULPS 양식의 파일에서 방위각과 출발각을 사용])
+ - Example data files
+  #list(marker: ([•]),
+  [north1.phase : example1에 사용되는 P파의 초동 극성 파일],
+  [north2.phase : example2,3에 사용되는 P파의 초동 극성 파일],
+  [north3.amp : example3에 사용되는 P파와 S파의 진폭 파일],
+  [north3.statcor : example3에 사용되는 관측소별 S/P 진폭비 보정 파일],
+  [north4.phase : 새로 추가된 예시, 갱신된 SCEDC 양식의 P파 초동 극성 파일],
+  [north5.simul : 새로 추가된 예시, SIMULPS 로부터 계산한 방위각과 출발각 파일],
+  [scsn.stations : example2,3에 사용되는 관측소 위치 파일],
+  [scsn.stations_5char : example4에 사용되는 5글자의 이름을 갖는 관측소 위치 파일],
+  [scsn.reverse : 모든 예시에 사용되는 관측소별 초동의 반전 기간 파일],
+  [vz.socal, etc : example2,3에 사용되는 1차원 속도 구조모델]
+  )
+ - Example output files
+  #list(marker: ([•]),
+  [example1.out, example2.out, example3.out : 각 예시에 맞는 최적의 단층면해],
+  [example1.out2, example2.out2, example3.out2 : 각 예시에 맞는 적합한 단층면해들],
+  [example4.out, example5.out : 새로 추가된 예시, 각 예시에 맞는 최적의 단층면해],
+  [example4.out2, example5.out2 : 각 예시에 맞는 적합한 단층면해들],
+  )
+ - 컴파일링과 프로그램의 실행은 다음과 같이 진행할 수 있음
+  #block(
+  fill: luma(230),
+  inset: 8pt,
+  radius: 4pt,
+  ```bash # 컴파일링
+  $ make hash_driverX                   # X = example number 
+  
+  # 프로그램 실행
+  $ ./hash_driverX                      # 파일이 요구하는 입력값을 직접 입력
+  $ ./hash_driverX < exampleX.inp       # 컨트롤 파일 이용
+  ```) #zz 코드가 성공적으로 컴파일 및 실행되었다면, 생성된 출력 파일은 제공된 예시와 거의 일치할 것임 \ #zz 몬테카를로 시뮬레이션 간 입력값은 무작위로 선택되기 때문에, 난수의 생성에 차이가 발생할 경우 출력값에 차이가 발생할 수 있음 
 #pagebreak()
 
 = RUNNING THE CODE
 == Computing Focal Mechanisms: 
+- Computing Focal Mechanisms
+ - 메인 코드는 주로 입/출력을 처리하며, 각 이벤트의 단층면해의 계산은 메인 코드에서 호출되는 세 서브루틴을 통해 수행됨 \ #zz 이 서브루틴들에 전달되는 배열에 가지고 있는 데이터의 형식을 가장 효율적으로 맞추기 위해, 메인 코드를 수정해야 함
+- Computing the set of acceptable mechanisms 
+ - 
+- Computing the preferred, or most probable, mechanism
 
+- Computing the data misfit for the preferred mech
 
 == Input and Data Preparation:
 
