@@ -121,7 +121,7 @@
 - Computing Focal Mechanisms
  - 메인 코드는 주로 입/출력을 처리하며, 각 이벤트의 단층면해의 계산은 메인 코드에서 호출되는 세 서브루틴을 통해 수행됨 \ #zz 이 서브루틴들에 전달되는 배열에 가지고 있는 데이터의 형식을 가장 효율적으로 맞추기 위해, 메인 코드를 수정해야 함
 - Computing the set of acceptable mechanisms 
- - 
+ - S/P 진폭비를 P파의 초동 극성과 함꼐 사용할지 여부에 따라 별개의 유사한 서브루틴을 사용 \ #zz 두 서브루틴의 입력에는 특정한 관측소들의 P파 극성(및 S/P 진폭비), 각 관측소에 대한 방위각 및 출발각이 포함 \ #zz 또한 이러한 입력값의 불확실성에 대한 추정치도 요구되며, 이는 단층면해의 안정성을 테스트하는 데 필요
 - Computing the preferred, or most probable, mechanism
 
 - Computing the data misfit for the preferred mech
