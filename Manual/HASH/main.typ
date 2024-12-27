@@ -1,13 +1,27 @@
 #import "template.typ": *
 #import "fitheight.typ": *
+#import "@preview/bubble:0.2.2": *
 
-#show: project.with(
-  title: "HASH: A FORTRAN Program for Computing Earthquake First Motion Focal Mechanisms",
-  authors: (
-    "Silent gyuu",
-  ),
-  main: "image/main.png"
-)
+#show: bubble.with(
+  title: "HASH",
+  subtitle: "A FORTRAN Program for Computing Earthquake First Motion Focal Mechanisms",
+  author: "Silent gyuu",
+  //affiliation: "University",
+  //date: datetime.today().display(),
+  //year: "Year",
+  //class: "Class",
+  //other: ("Made with Typst", "https://typst.com"),
+  //logo: image("logo.png"),
+  color-words: ("important",)
+) 
+#let body-font = "GangwonEduAll"
+#let sans-font = "GangwonEduAll"
+#set text(font: body-font, lang: "ko", weight: "light")
+#set heading(numbering: "1.1")
+
+#outline(depth: 2, indent: true)
+#pagebreak()
+
 
 #show <r>: set text(red)
 
