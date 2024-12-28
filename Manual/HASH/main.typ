@@ -51,55 +51,55 @@
  - 소스 코드 
   #block(fill: luma(230), inset: 8pt, radius: 4pt,
   list(marker:([•]),
-  [hash_driver1.f, hash_driver2.f, hash_driver3.f : 메인 코드의 예시],
-  [hash_driver4.f : 새로 추가된 예시, 2008년 1월 기준 SCEDC 형식 및 5글자의 관측소 이름을 가짐],
-  [hash_driver5.f : 새로 추가된 예시, 3차원 파선 트레이싱에 사용되는 SIMULPS 형식],
+  [hash_driver1.f, hash_driver2.f, hash_driver3.f : 메인 드라이버 프로그램],
+  [hash_driver4.f : (새로 추가) 다섯 글자의 관측소명을 가지는 등 SCEDC 표준 형식을 따름],
+  [hash_driver5.f : (새로 추가) 3차원 지진파 트레이싱에 사용되는 SIMULPS 형식을 따름],
   [fmamp_subs.f : P파의 초동 극성과 S/P 진폭비를 이용해 단층면해를 계산하는 서브루틴],
   [fmech_subs.f : P파의 초동 극성만을 이용해 단층면해를 계산하는 서브루틴],
-  [pol_subs.f : 초동 극성의 분포와 미스핏을 계산하는 서브루틴],
-  [station_subs.f : 관측소의 위치와 극성의 반전 여부를 계산하는 서브루틴],
-  [station_subs_5char.f : 새로 추가된 서브루틴, 5글자의 이름을 가지는 관측소 대상],
+  [pol_subs.f : 초동 극성의 분포와 오차를 계산하는 서브루틴],
+  [station_subs.f : 관측소의 위치와 초동 극성의 반전과 관련된 서브루틴],
+  [station_subs_5char.f : (새로 추가) 다섯 글자의 관측소명을 가진 관측소 위치와 초동 극성의 반전과 관련된 서브루틴],
   [uncert_subs.f : 단층면해의 불확실성을 계산하는 서브루틴],
   [utils_subs.f : 기타 유틸리티를 포함한 서브루틴],
-  [vel_subs.f : 속도 구조모델 테이블을 계산하는 서브루틴]))
- - 설정 파일
+  [vel_subs.f : 속도 구조모델 테이블에 관한 서브루틴]))
+ - 설정 파일(Include files)
   #block(fill: luma(230), inset: 8pt, radius: 4pt,
   list(marker:([•]),
-  [param.inc : 배열의 크기를 조절하기 위한 파라미터들],
-  [hash_driver4.f : 단층면해를 결정하는데 필요한 격자의 간격 결정],
-  [hash_driver5.f : 속도 구조모델 테이블 파라미터],))
+  [param.inc : 배열의 크기를 조절하기 위한 매개변수들 조정],
+  [hash_driver4.f : 격자 검색법에 사용되는 격자의 간격 결정],
+  [hash_driver5.f : 속도 구조모델 테이블 관련 매개변수 조정]))
  - Makefile
   #block(fill: luma(230), inset: 8pt, radius: 4pt,
   list(marker:([•]),
-  [Makefile ],))
- - 예시 컨트롤 파일
+  [Makefile],))
+ - 예제 컨트롤 파일
   #block(fill: luma(230), inset: 8pt, radius: 4pt,
   list(marker: ([•]),
-  [example1.inp : P파의 초동 극성만을 이용한 예시에 사용, 출발각의 불확실성을 직접 입력],
-  [example2.inp : P파의 초동 극성만을 이용한 예시에 사용, 1차원 속도 구조모델들을 이용해 출발각의 불확실성을 입력],
-  [example3.inp : P파의 초동 극성과 S/P 진폭비를 이용한 예시에 사용, 1차원 속도 구조모델들을 이용해 출발각의 불확실성을 입력],
-  [example4.inp : 새로 추가된 예시, example2.inp와 같지만 갱신된 SCEDC의 양식을 따름],
-  [example5.inp : 새로 추가된 예시, example2.inp와 같지만 SIMULPS 양식의 파일에서 방위각과 출발각을 사용]))
- - 예시 데이터 파일
+  [example1.inp : P파의 초동 극성을 이용하여 계산할 때 사용, 출발각의 불확실성을 직접 입력],
+  [example2.inp : P파의 초동 극성을 이용하여 계산할 때 사용, 1차원 속도 구조모델들을 이용해 출발각의 불확실성 입력],
+  [example3.inp : P파의 초동 극성과 S/P 진폭비를 모두 이용하여 계산할 때 사용, 1차원 속도 구조모델들을 이용해 출발각의 불확실성 입력],
+  [example4.inp : (새로 추가) example2.inp와 같지만 갱신된 SCEDC의 형식을 따름],
+  [example5.inp : (새로 추가) example2.inp와 같지만 SIMULPS 형식의 파일으로부터 방위각과 출발각을 이용]))
+ - 예제 데이터 파일
   #block(fill: luma(230), inset: 8pt, radius: 4pt,
   list(marker: ([•]),
   [north1.phase : example1에 사용되는 P파의 초동 극성 파일],
   [north2.phase : example2,3에 사용되는 P파의 초동 극성 파일],
   [north3.amp : example3에 사용되는 P파와 S파의 진폭 파일],
   [north3.statcor : example3에 사용되는 관측소별 S/P 진폭비 보정 파일],
-  [north4.phase : 새로 추가된 예시, 갱신된 SCEDC 양식의 P파 초동 극성 파일],
-  [north5.simul : 새로 추가된 예시, SIMULPS 로부터 계산한 방위각과 출발각 파일],
+  [north4.phase : (새로 추가) SCEDC 형식의 P파 초동 극성 파일],
+  [north5.simul : (새로 추가) SIMULPS 로부터 얻은 방위각과 출발각 파일],
   [scsn.stations : example2,3에 사용되는 관측소 위치 파일],
-  [scsn.stations_5char : example4에 사용되는 5글자의 이름을 갖는 관측소 위치 파일],
-  [scsn.reverse : 모든 예시에 사용되는 관측소별 초동의 반전 기간 파일],
-  [vz.socal, etc : example2,3에 사용되는 1차원 속도 구조모델]))
- - 예시 출력 파일
+  [scsn.stations_5char : example4에 사용되는 다섯 글자 관측소 위치 파일],
+  [scsn.reverse : 모든 예시에 사용되는 관측소별 초동 극성의 반전 파일],
+  [vz.socal, etc : example2,3에 사용되는 1차원 속도 구조모델 파일]))
+ - 예제 출력 파일
   #block(fill: luma(230), inset: 8pt, radius: 4pt,
   list(marker: ([•]),
-  [example1.out, example2.out, example3.out : 각 예시에 맞는 최적의 단층면해],
-  [example1.out2, example2.out2, example3.out2 : 각 예시에 맞는 적합한 단층면해들],
-  [example4.out, example5.out : 새로 추가된 예시, 각 예시에 맞는 최적의 단층면해],
-  [example4.out2, example5.out2 : 각 예시에 맞는 적합한 단층면해들],))
+  [example1.out, example2.out, example3.out : 각 예제에 맞는 최적의 단층면해 출력],
+  [example1.out2, example2.out2, example3.out2 : 각 예제에 맞는 허용될 수 있는 단층면해들 출력],
+  [example4.out, example5.out : (새로 추가) 각 예제에 맞는 최적의 단층면해 출력],
+  [example4.out2, example5.out2 : (새로 추가) 각 예제에 맞는 허용될 수 있는 단층면해들 출력]))
 - 컴파일링 및 프로그램의 실행은 다음과 같이 진행할 수 있습니다.
   #block(
   fill: black,
@@ -109,9 +109,10 @@
   $ make hash_driverX                   # X = example number 
   
   # 프로그램 실행
-  $ ./hash_driverX                      # 파일이 요구하는 입력값을 직접 입력
-  $ ./hash_driverX < exampleX.inp       # 컨트롤 파일 이용
-  ```], white)) #zz 코드가 성공적으로 컴파일 및 실행되었다면, 생성된 출력 파일은 제공된 예시와 거의 일치할 것임 \ #zz 몬테카를로 시뮬레이션 간 입력값은 무작위로 선택되기 때문에, 난수의 생성에 차이가 발생할 경우 출력값에 차이가 발생할 수 있음 
+  $ ./hash_driverX                      # 파일이 요구하는 입력값을 직접 입력할 경우
+  $ ./hash_driverX < exampleX.inp       # 컨트롤 파일을 이용하는 경우
+  ```], white))
+  - 코드가 성공적으로 컴파일 및 실행되었다면, 출력 파일은 제공된 예시와 거의 일치할 것이다. 출력된 결과가 샘플과 완전히 일치하지 않을 수 있는데, 이는 각 몬테카를로 시뮬레이션에 입력 데이터가 무작위로 선택되기 때문에, 난수의 생성에 차이가 발생하게 됨에 따라 차이가 발생하는 것으로 여길 수 있다.
 #pagebreak()
 
 = RUNNING THE CODE
