@@ -4,6 +4,7 @@
 
 #show: project.with(
   title: "HASH: A FORTRAN Program for Computing Earthquake First Motion Focal Mechanisms",
+  subtitle: "Jeanne L. Hardeback, Peter M. Shearer",
   authors: (
     "Silent gyuu",
   ),
@@ -15,16 +16,9 @@
 
 #let zz = $arrow.r.curve$
 
-#show raw.where(block: false): box.with(
-  fill: luma(240),
-  inset: (x: 3pt, y: 0pt),
-  outset: (y: 3pt),
-  radius: 2pt,
-)
-
 #set figure(supplement: none)
 
-#set text(size: 9pt)
+#set text(size: 8pt)
   
 #set enum(spacing:1em,
           //numbering: "1)",//
@@ -39,25 +33,24 @@
 
 = Introduction
 - Introduction
- - 작은 지진의 단층면해는 주로 P파의 초동 극성을 이용해 결정할 수 있는데, 불완전한 속도 구조모델 등 여러 오류에 대해 매우 민감함 \ #zz 이러한 문제에 의해 개발된 것이 HASH(HArdeback & SHearer)로, 새로운 방법을 이용해 더욱 안정적인 단층면해를 계산할 수 있음 \ #zz 다양한 불확실성의 요소들로부터 적합한 결과들을 생성하고, 그 중 가장 높은 가능성을 가지는 결과를 반환함
- - 본 메뉴얼은 연구자들이 각자의 데이터셋을 이용해 HASH를 실행하는 것을 돕기 위해 작성되었으며, 소스코드는 다음의 주소#footnote[https://www.usgs.gov/node/279393 (24.12.25 기준)]를 참고
- - HASH는 격자 탐색법을 이용해 P파의 초동 극성 또는 S파와 P파의 진폭비를 기반으로 단층면해를 결정 \ #zz 각 지진에 대해 적합한 해들이 결정되면 그 분포를 통해 불확실성을 확인할 수 있고, 그에 따른 해의 품질이 결정됨 \ #zz 이때 고려되는 불확실성은 측정한 극성과 진원 위치, 출발각(속도 구조모델)으로부터 기인한 것으로, 이들 각각의 추정치가 필요함
- - HASH는 입/출력 작업을 처리하는 메인 코드와 입력값을 내부의 배열로 불러와 계산을 수행하는 서브루틴 코드로 구성 \ #zz HASH는 입력값의 형식에 의존되지 않으며, 다른 형식의 입력값을 사용한다면 메인 코드와 관측소 서브루틴 코드만 수정하면 됨
- - HASH는 SCSN(Trinet)#footnote[Southern California Seismic Network]이 수집하고 SCECE#footnote[Southern California Earthquake Data Center]이 제공한 데이터를 이용해 개발되었으며, 기존 단층면해 결정에 쓰이는 FPFIT#footnote[Reasenberg & Oppenheimer (1985). ]를 참조 \ #zz 본 메뉴얼에서 사용될 예시는 SCEDC의 지진파 위상 데이터의 표준 형식에 유사한 형식을 가짐 \ #zz HASH 1.2에 추가된 Example 4는 2008년 1월 기준 SCEDC 표준 형식을 따름   
- - HASH는 Fortran 77로 작성되었으며, Sun 워크스테이션 및 Linux, Mac OS X에서 다음과 같은 컴파일러#footnote[http://fink.sourceforge.net/]를 이용해 테스트되어짐
- - 연구에 해당 코드를 사용하셨다면, 다음의 논문을 인용해 주시기 바랍니다.
-  #block(
+ - 작은 지진의 단층면해는 주로 P파의 초동 극성을 이용해 결정할 수 있는데, 불완전한 속도 구조모델 등 오차를 발생시키는 여러 원인에 대해 매우 민감한 특성을 가진다. 이러한 문제를 해결하기 위해 개발된 것이 HASH(HArdeback & SHearer)로, 새로운 방법을 이용해 더욱 안정적인 단층면해를 계산할 수 있다. HASH는 불확실성을 야기하는 다양한 요소들이 주어졌을 때, 각 지진에 대해 허용될 수 있는 단층면해들을 생성하고, 그 중 가장 높은 가능성을 가지는 결과를 출력한다. 결정된 단층면해의 정확도는 모델이 가지는 불확실성에 대해 계산된 해의 안정성 정도에 따라 결정되며, 이는 허용될 수 있는 단층면해들의 분포로 표현할 수 있다. 
+ - 본 매뉴얼은 연구자들이 각자의 데이터셋을 이용해 HASH를 실행하는 것을 돕기 위해 작성되었으며, 소스코드는 다음의 주소#footnote[https://www.usgs.gov/node/279393 (24.12.25 기준)] 를 참고하라. 더 자세한 방법은 저자의 출판물에서 확인할 수 있으며, 연구에 해당 코드를 사용하였다면 다음의 논문들을 인용하길 바란다.
+ #block(
   fill: luma(230),
   inset: 8pt,
   radius: 4pt,
   text[1. Hardebeck, Jeanne L. and Peter M. Shearer, A new method for determining first-motion focal mechanisms, Bulletin of the Seismological Society of America, 92, 2264-2276, 2002.
   2. Hardebeck, Jeanne L. and Peter M. Shearer, Using S/P Amplitude Ratios to Constrain the Focal Mechanisms of Small Earthquakes, Bulletin of the Seismological Society of America, 93, 2434-2444, 2003.])
+ - HASH는 P파의 초동 극성(또는 S/P파의 진폭비) 기반 단층면해를 결정하기 위해 격자 탐색법을 이용하며, 그 결과 각 지진에 대해 허용될 수 있는 해들을 얻을 수 있다. 이 해들의 분포를 통해 불확실성 및 그에 동반하는 해의 정확도가 결정되어진다. 얻어진 해들은 측정한 P파의 극성과 진원의 위치, 출발각(속도 구조모델)의 불확실성을 고려하기 때문에, 따라서 이 각각의 불확실성이 어떠한 값을 가지는지에 대한 추정치가 필요하다.
+ - HASH는 입/출력 작업을 처리하고, 입력 데이터를 내부의 배열로 불러오는 역할을 수행하는 메인 드라이버 코드와 단층면해, 불확실성을 계산하며 관측소의 위치와 속도 구조모델을 다루는 서브루틴 코드로 구성되어진다. HASH는 입력 데이터의 형식에 의존되지 않는 프로그램으로, 만약 다른 형식의 데이터를 사용한다면 메인 드라이버 코드와 관측소 서브루틴만 수정함으로서 간단히 작업을 수행할 수 있다. 
+ - HASH는 SCSN(Southern California Seismic Network; TriNet)#footnote[Southern California Seismic Network] 이 수집하고 SCECE(Southern California Earthquake Data Center)#footnote[Southern California Earthquake Data Center] 이 제공한 데이터를 이용해 개발되었으며, 따라서 본 매뉴얼의 예시는 SCEDC 지진파 위상 데이터의 표준 배포 형식에 유사한 형식을 가진다. 또한 HASH는 기존 단층면해 결정에 널리 쓰이는 FPFIT#footnote[Reasenberg & Oppenheimer (1985). ] 를 참조하였다. HASH 1.2 버전에 추가된 Example 4는 2008년 1월 기준 SCEDC의 지진파 위상과 관측소 표준 형식을 따랐으며, 따라서 다섯 글자의 관측소명을 가지는 관측소를 포함한다.
+ - HASH는 Fortran 77로 작성되었으며, 다양한 환경의 Sun 워크스테이션 및 Linux, Mac OS X에서 다음과 같은 컴파일러#footnote[http://fink.sourceforge.net/] 를 이용해 테스트되었다. 다른 환경에서 작동하기 위해 변경사항이 필요하거나, 버그를 발견한다면 저자에게 연락해주길 바란다. 
 #pagebreak()
 = Overview
-- Overview
- - HASH 디렉토리에는 다음과 같은 파일들이 존재해야 합니다.
- - Source code
-  #list(marker:([•]),
+- HASH 폴더 내에는 다음과 같은 파일들이 존재해야 한다.
+ - 소스 코드 
+  #block(fill: luma(230), inset: 8pt, radius: 4pt,
+  list(marker:([•]),
   [hash_driver1.f, hash_driver2.f, hash_driver3.f : 메인 코드의 예시],
   [hash_driver4.f : 새로 추가된 예시, 2008년 1월 기준 SCEDC 형식 및 5글자의 관측소 이름을 가짐],
   [hash_driver5.f : 새로 추가된 예시, 3차원 파선 트레이싱에 사용되는 SIMULPS 형식],
@@ -68,22 +61,28 @@
   [station_subs_5char.f : 새로 추가된 서브루틴, 5글자의 이름을 가지는 관측소 대상],
   [uncert_subs.f : 단층면해의 불확실성을 계산하는 서브루틴],
   [utils_subs.f : 기타 유틸리티를 포함한 서브루틴],
-  [vel_subs.f : 속도 구조모델 테이블을 계산하는 서브루틴])
- - Include files
-  #list(marker:([•]),
+  [vel_subs.f : 속도 구조모델 테이블을 계산하는 서브루틴]))
+ - 설정 파일
+  #block(fill: luma(230), inset: 8pt, radius: 4pt,
+  list(marker:([•]),
   [param.inc : 배열의 크기를 조절하기 위한 파라미터들],
   [hash_driver4.f : 단층면해를 결정하는데 필요한 격자의 간격 결정],
-  [hash_driver5.f : 속도 구조모델 테이블 파라미터],)
+  [hash_driver5.f : 속도 구조모델 테이블 파라미터],))
  - Makefile
- - Example control files
-  #list(marker: ([•]),
+  #block(fill: luma(230), inset: 8pt, radius: 4pt,
+  list(marker:([•]),
+  [Makefile ],))
+ - 예시 컨트롤 파일
+  #block(fill: luma(230), inset: 8pt, radius: 4pt,
+  list(marker: ([•]),
   [example1.inp : P파의 초동 극성만을 이용한 예시에 사용, 출발각의 불확실성을 직접 입력],
   [example2.inp : P파의 초동 극성만을 이용한 예시에 사용, 1차원 속도 구조모델들을 이용해 출발각의 불확실성을 입력],
   [example3.inp : P파의 초동 극성과 S/P 진폭비를 이용한 예시에 사용, 1차원 속도 구조모델들을 이용해 출발각의 불확실성을 입력],
   [example4.inp : 새로 추가된 예시, example2.inp와 같지만 갱신된 SCEDC의 양식을 따름],
-  [example5.inp : 새로 추가된 예시, example2.inp와 같지만 SIMULPS 양식의 파일에서 방위각과 출발각을 사용])
- - Example data files
-  #list(marker: ([•]),
+  [example5.inp : 새로 추가된 예시, example2.inp와 같지만 SIMULPS 양식의 파일에서 방위각과 출발각을 사용]))
+ - 예시 데이터 파일
+  #block(fill: luma(230), inset: 8pt, radius: 4pt,
+  list(marker: ([•]),
   [north1.phase : example1에 사용되는 P파의 초동 극성 파일],
   [north2.phase : example2,3에 사용되는 P파의 초동 극성 파일],
   [north3.amp : example3에 사용되는 P파와 S파의 진폭 파일],
@@ -93,27 +92,26 @@
   [scsn.stations : example2,3에 사용되는 관측소 위치 파일],
   [scsn.stations_5char : example4에 사용되는 5글자의 이름을 갖는 관측소 위치 파일],
   [scsn.reverse : 모든 예시에 사용되는 관측소별 초동의 반전 기간 파일],
-  [vz.socal, etc : example2,3에 사용되는 1차원 속도 구조모델]
-  )
- - Example output files
-  #list(marker: ([•]),
+  [vz.socal, etc : example2,3에 사용되는 1차원 속도 구조모델]))
+ - 예시 출력 파일
+  #block(fill: luma(230), inset: 8pt, radius: 4pt,
+  list(marker: ([•]),
   [example1.out, example2.out, example3.out : 각 예시에 맞는 최적의 단층면해],
   [example1.out2, example2.out2, example3.out2 : 각 예시에 맞는 적합한 단층면해들],
   [example4.out, example5.out : 새로 추가된 예시, 각 예시에 맞는 최적의 단층면해],
-  [example4.out2, example5.out2 : 각 예시에 맞는 적합한 단층면해들],
-  )
- - 컴파일링과 프로그램의 실행은 다음과 같이 진행할 수 있음
+  [example4.out2, example5.out2 : 각 예시에 맞는 적합한 단층면해들],))
+- 컴파일링 및 프로그램의 실행은 다음과 같이 진행할 수 있습니다.
   #block(
-  fill: luma(230),
+  fill: black,
   inset: 8pt,
   radius: 4pt,
-  ```bash # 컴파일링
+  text([```bash # 컴파일링
   $ make hash_driverX                   # X = example number 
   
   # 프로그램 실행
   $ ./hash_driverX                      # 파일이 요구하는 입력값을 직접 입력
   $ ./hash_driverX < exampleX.inp       # 컨트롤 파일 이용
-  ```) #zz 코드가 성공적으로 컴파일 및 실행되었다면, 생성된 출력 파일은 제공된 예시와 거의 일치할 것임 \ #zz 몬테카를로 시뮬레이션 간 입력값은 무작위로 선택되기 때문에, 난수의 생성에 차이가 발생할 경우 출력값에 차이가 발생할 수 있음 
+  ```], white)) #zz 코드가 성공적으로 컴파일 및 실행되었다면, 생성된 출력 파일은 제공된 예시와 거의 일치할 것임 \ #zz 몬테카를로 시뮬레이션 간 입력값은 무작위로 선택되기 때문에, 난수의 생성에 차이가 발생할 경우 출력값에 차이가 발생할 수 있음 
 #pagebreak()
 
 = RUNNING THE CODE
@@ -160,11 +158,88 @@
     subroutine FOCALAMP_MC(p_azi_mc, p_the_mc, sp_amp, p_pol, npsta, nmc, dang, maxout, nextra,
     ntotal, qextra, qtotal, nf, strike, dip, rake, faults, slips)
     ```]
-    
+  - Inputs
+   #list(marker: ([•]),
+  [#text("p_azi_mc(npsta, nmc)", font:"Courier New") : 방위각],
+  [#text("p_the_mc(npsta, nmc)", font:"Courier New") : 출발각],
+  [#text("sp_amp(npsta)", font:"Courier New") : 진폭비($log_10 ("S/P")$)],
+  [#text("p_pol(npsta)", font:"Courier New") : 초동 극성(1 = up, -1 = down)],
+  [#text("npsta",font:"Courier New") : 관측한 초동의 수],
+  [#text("nmc",font:"Courier New") : 시도 횟수(주어진 각 관측소에서의 방위각-출발각 쌍의 수)],
+  [#text("dang",font:"Courier New") : 격자 검색에서의 각도 간격(Degree)],
+  [#text("maxout",font:"Courier New") : 반환되는 단층 면의 최대 개수(만약 더 발견된다면, 랜덤한 값이 리턴)],
+  [#text("nextra",font:"Courier New") : 허용되는 추가 극성 미스핏의 수],
+  [#text("ntotal",font:"Courier New") : 허용되는 총 극성 미스핏의 최소 개수],
+  [#text("qextra",font:"Courier New") : 허용되는 추가 진폭  미스핏의 최소 개수],
+  [#text("qtotal",font:"Courier New") : 허용되는 총 진폭 미스핏의 최소 개수],
+  )
+  - Outputs
+   #list(marker: ([•]),
+   [#text("nf", font:"Courier New") : 찾아낸 단층면해의 수],
+   [#text("strike(min(maxout, nf)", font:"Courier New")) : 주향],
+   [#text("dip(min(maxout, nf)", font:"Courier New")) : 경사],
+   [#text("rake(min(maxout, nf)", font:"Courier New")) : 미끌림각],
+   [#text("faults(3, min(maxout, nf)", font:"Courier New")) : 단층의 법선 벡터],
+   [#text("slips(3, min(maxout, nf)", font:"Courier New")) : Slip 벡터],
+   )
 - Computing the preferred, or most probable, mechanism
-
+ - 계산으로부터 도출된 단층면해들은 최적의 단층면해를 결정하거나 해의 품질을 결정하는데에 사용됨 \ #zz 최적의 단층면해는 이상치들이 제거된 이후의 적합한 단층면해들로부터 평균으로 계산됨 \ #zz 두 가지의 불확실성이 계산됨 \ #zz 적합한 nodal plane과 최적의 nodal plane 간 RMS 차이와 \ #zz  사용자가 정의한 '가까운' 각도를 기준으로 최적의 단층면해가 실제 단층면해와 '가까운' 정도 \ #zz 이상치 군집이 존재할 시에, 이 이상치들로부터 대체 해가 발견될 수 있고, 이 때 최소 확률을 설정해 확률이 낮은 해는 무시할 수 있음
+ #sourcecode[
+    ```Fortran
+    subroutine MECH_PROB(nf, normlin, norm2in, cangle, str_avg, dip_avg, rak_avg, prob, rms_diff)
+    ```]
+  - input
+   #list(marker: ([•]),
+  [#text("nf") : 단층 면의 수 ],
+  [#text("norm1(3,nf)") : 단층면의 법선 벡터],
+  [#text("norm2(3,nf)") : 보조 단층면의 Slip/법선 vector],
+  [#text("cangle") : cangle 보다 작은 각도를 가질 때, 단층면해가 실제 단층면해와 '가깝다'고 여길 수 있음],
+  [#text("prob_max") : 다수의 해에 대한 최소 확률],)
+  - Output
+   #list(marker: ([•]),
+  [#text("nstln") : 출력되는 해의 개수 ],
+  [#text("str_avg(nstln)") : 각 단층면해의 주향],
+  [#text("dip_avg(nstln)") : 각 단층면해의 경사],
+  [#text("rak_avg(nstln)") : 각 단층면해의 미끌림각],
+  [#text("prob(nstln)") : 해의 평균에 '가까운' 해들의 비율],
+  [#text("rms_diff(2,nstln)") : 모든 단층면의 평균 단층면에 대한 RMS 각 오차(1 = 주단층면, 2 = 보조단층면)],)
 - Computing the data misfit for the preferred mech
-
+ - 최적의 단층면해를 찾는 마지막 과정은 데이터의 미스핏을 찾는 것 \ #zz P파의 초동 극성과 함께 S/P 진폭비가 사용되는지 여부에 따라 별개의 유사한 서브루틴이 사용됨 \ #zz 입력값으로는 관측소 별 초동 극성과 진폭비, 방위각과 출발각, 최적의 메커니즘을 이용 \ #zz 출력값은 극성 미스핏의 가중치 비율 #text("mfrac", font: "Courier New"), 관측소의 분포 비율 #text("stdr", font: "Courier New") \ #zz 만약 S/P 진폭비가 사용되면 평균 $log_10 ("S/P")$ 미스핏이 #text("mavg", font: "Courier New") 로 출력
+ - P파의 초동 극성만 이용할 경우 `GET_MISF` 서브루틴을 이용하며, 다음과 같은 입/출력값을 가짐
+ #sourcecode[
+    ```Fortran
+    subroutine GET_MISF(npol, p_azi_mc, p_the_mc, p_pol, p_qual, str_avg, dip_avg, rak_avg, mfrac, stdr)
+    ```]
+ - Inputs
+   #list(marker: ([•]),
+  [#text("npol", font:"Courier New") : 초동 극성의 개수],
+  [#text("p_azi_mc(npol)", font:"Courier New") : 방위각],
+  [#text("p_the_mc(npol)", font:"Courier New") : 출발각],
+  [#text("p_pol(npol)", font:"Courier New") : 초동 극성],
+  [#text("p_qual(npol)", font:"Courier New") : 초동 극성의 품질],
+  [#text("str_avg, dip_avg, rak_avg", font:"Courier New") : 최적의 메커니즘],)
+ - Outputs
+   #list(marker: ([•]),
+  [#text("mfrac", font:"Courier New") : 극성 미스핏의 가중치 비율],
+  [#text("stdr", font:"Courier New") : 관측소 분포 비율],)
+ - P파의 초동 극성과 S/P 진폭비를 모두 이용할 경우 `GET_MISF_AMP` 서브루틴을 이용
+ #sourcecode[
+    ```Fortran
+    subroutine GET_MISF_AMP(npol, p_azi_mc, p_the_mc, sp_ratio, p_pol, str_avg, dip_avg, rak_avg, mfrac, mavg, stdr)
+    ```]
+  - Inputs
+   #list(marker: ([•]),
+  [#text("npol", font:"Courier New") : 초동 극성의 개수],
+  [#text("p_azi_mc(npol)", font:"Courier New") : 방위각],
+  [#text("p_the_mc(npol)", font:"Courier New") : 출발각],
+  [#text("sp_ratio(npol)", font:"Courier New") : S/P 진폭비],
+  [#text("p_pol(npol)", font:"Courier New") : 초동 극성],
+  [#text("str_avg, dip_avg, rak_avg", font:"Courier New") : 최적의 메커니즘],)
+  - Outputs
+   #list(marker: ([•]),
+  [#text("mfrac", font:"Courier New") : 극성 미스핏의 가중치 비율],
+  [#text("mavg", font:"Courier New") : 평균 $log_10 ("S/P")$ 미스핏],
+  [#text("stdr", font:"Courier New") : 관측소 분포 비율],)
 == Input and Data Preparation:
 
 == Include Files:

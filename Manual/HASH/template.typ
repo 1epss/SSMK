@@ -1,15 +1,15 @@
-#let project(title: "", authors: (), logo: none, main: none, body) = {
+#let project(title: "", subtitle: "", authors: (), logo: none, main: none, body) = {
   // Set the document's basic properties.
   set document(author: authors, title: title)
   set page(numbering: "1", number-align: center)
 
   // Save heading and body font families inv ariables.
-  let body-font = "GangwonEduAll"
-  let sans-font = "GangwonEduAll"
+  let body-font = ("Times New Roman Cyr", "Malgun Gothic")
+  let sans-font = "Times New Roman Cyr"
 
   // Set body font family.
   set text(font: body-font, lang: "ko", weight: "light")
-  show heading: set text(font: sans-font, size:15pt)
+  show heading: set text(font: sans-font, size:13pt)
   set heading(numbering: "1.1")
 
   // Title page.
@@ -27,6 +27,8 @@
   v(2.6fr)
 
   text(font: sans-font, 2em, weight: 700, title)
+  v(0.6fr)
+  text(font: sans-font, 1.5em, weight: 100, subtitle)
 
   // Author information.
   pad(
