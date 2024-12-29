@@ -117,20 +117,18 @@
 
 = RUNNING THE CODE
 == Computing Focal Mechanisms: 
-- Computing Focal Mechanisms
- - 메인 코드는 주로 입/출력을 처리하며, 각 이벤트의 단층면해의 계산은 메인 코드에서 호출되는 세 서브루틴을 통해 수행됨 \ #zz 이 서브루틴들에 전달되는 배열에 가지고 있는 데이터의 형식을 가장 효율적으로 맞추기 위해, 메인 코드를 수정해야 함
-- Computing the set of acceptable mechanisms 
- - S/P 진폭비를 P파의 초동 극성과 함께 사용할 것인지 여부에 따라 별개의 유사한 서브루틴이 사용됨 \ #zz 양쪽의 서브루틴에는 관측소들의 P파 초동 극성, S/P파 진폭비, 방위각과 출발각이 입력값으로 들어감 \ #zz 입력값들의 불확실성 추정치 또한 단층면해의 안정성을 테스트하는데 필요함   
- - 방위각과 출발각의 불확실성은 서로 다른 진원 깊이, 속도 구조모델에 대해 반복적인 계산 시도에서 얻은 합리적인 수치들로 나타남 \ #zz 예를 들어 5번째 시도의 경우, 진원 위치와 속도 구조모델은 고정되어 있고, 7번째 관측소에 대한 방위각과 출발각은 각각 `p_azi_mc(7,5)`, `p_the_mc(7.5)` 에 저장되며, 8번째 관측소는 `p_azi_mc(8,5)`, `p_the_mc(8,5)` 에 저장됨 \ #zz 초동의 극성과 발췌 정확도, S/P 진폭비는 각각의 시도에서 같은 값을 가지며, 7번째 관측소에 대해 각각 `p_pol(7)`, `p_qual(7)`, `sp_amp(7)` 에 저장되게 됨 \ #zz 시도 횟수와 관측소의 개수는 각각 `nmc`, `npsta`에서 정의 \ #zz 각각의 시도 간에 적합한 단층면해들이 만들어질 것이며, 그것들을 결합하여 대상 지진에 대해 적합한 단층면해들을 생성
- - P파의 초동 피크의 불확실성은 얼마나 많은 극성 오차가 허용 가능한지에 따라 설명될 수 있음 \ #zz 결과값으로 나온 적합한 단층면해들은 이러한 미스핏 극성들을 포함한 해로 여길 수 있음 \ #zz 허용된 미스핏 극성의 수는 최적의 해가 가지는 미스핏 극성의 수에 추가로 `nextra` 를 더한 값으로 정의됨 \ #zz 만약 이 허용된 미스핏 극성의 수가 `ntotal`보다 적다면, `ntotal`이 허용된 미스핏의 수로 사용됨 \ #zz 일반적으로 `ntotal` 값은 극성의 총 개수와 네트워크의 알려진 극성 오차의 비율을 곱한 값을 이용해, 극성 미스핏 수를 예상할 수 있음 \ #zz 주로 `ntotal`의 절반인 `nextra`를 사용함 \ #zz 또한, S/P 진폭비의 경우 허용가능한 $log_10 (S"/"P)$ 미스핏은 최적의 해의 미스핏에 `qextra`를 더한 값으로 정의하며, 이게 `qtotal`보다 작으면 `qtotal`을 사용 \ #zz 일반적으로 `qtotal`은 S/P 진폭비의 총 개수에 평균 불확실성 추정치를 곱한 값이며, `qextra`는 `qtotal`의 절반
- - `dang` 은 격자 검색의 정밀도를 나타내는 파라미터이며, `maxout`은 적합한 단층면해들의 최대 개수를 설정하는 파라미터
- - 찾아낸 적합한 단층면해의 총 개수는 `nf`로 표시되지만, 최대 개수는 `maxout`으로 제한됨 \ #zz 각각의 적합한 단층면해에 대해, 단층면해에 관련된 파라미터와 두 Nodal plane의 법선 벡터가 반환됨
- - P파의 초동 극성만 이용할 경우 `FOCALMC` 서브루틴을 이용하며, 다음과 같은 입/출력값을 가짐 \ 
-  #sourcecode[
-    ```Fortran
-    subroutine FOCALMC(p_azi_mc, p_the_mc, p_pol, p_qual, npsta, nmc, dang, maxout, nextra,
-    ntotal, nf, strike, dip, rake, faults, slips)
-    ```]
+- 단층면해 계산 
+ - 메인 드라이버(프로그램)는 주로 입/출력 과정을 담당하며, 실제 지진별 단층면해의 계산은 메인 드라이버에서 호출되는 세 개의 서브루틴을 통해 수행되어진다. 메인 드라이버의 루틴들을 수정하여, 입력 데이터의 형식을 서브루틴이 받는 배열로 효율적으로 바꿔주어야 한다. 
+- 허용될 수 있는 단층면해들의 계산
+ - 계산 과정에 S/P 진폭비를 P파의 초동 극성과 함께 사용할 것인지 여부에 따라 별개의 유사한 서브루틴이 사용될 수 있다. 두 서브루틴 모두에 사용되는 입력 데이터로는 지진 발생 시 여러 관측소에서 측정한 P파의 초동 극성(과 S/P파 진폭비), 방위각과 출발각이 있다. 또한 이 입력 데이터들이 가지는 불확실성의 추정치는 단층면해의 안정성을 테스트하는데 필요하다.   
+ - 방위각과 출발각이 가지는 불확실성은 서로 다른 진원 깊이, 속도 구조모델에 대해 수행된 반복적인 계산 과정에서 얻은 합리적인 수치들의 조합으로 나타난다. 진원 위치와 속도 구조모델을 고정해놓았다고 가정한 후 수행한 5번째 계산의 경우에서, 7번째 관측소에 대한 방위각과 출발각은 각각 #text("p_azi_mc(7,5), p_the_mc(7,5)", font:"Courier New")에 저장되며, 8번째 관측소에 대한 정보는 #text("p_azi_mc(8,5), p_the_mc(8,5)", font: "Courier New") 에 저장되어질 것이다. P파의 초동 극성과 발췌한 위상의 정확도, S/P 진폭비는 각각의 계산에서 같은 값을 가지며, 7번째 관측소에 대해 계산한 예시는 각각 #text("p_pol(7), p_qual(7), sp_amp(7)", font:"Courier New") 에 저장되어진다. 계산의 수행 횟수와 사용된 관측소의 개수는 각각 #text("nmc, npsta", font:"Courier New") 에서 정의된다. 각각의 계산 과정에서 허용 가능한 단층면해들이 생성될 것이며, 이것들을 결합하여 최종적으로 대상 지진에 대해 허용 가능한 단층면해들을 생성할 수 있다.
+ - P파 초동 극성의 불확실성은 허용 가능한 초동 극성 오차의 개수를 지정함으로써 고려할 수 있으며, 출력되는 허용 가능한 단층면해들은 최대 이 개수만큼의 극성 오차를 가진 해들을 포함하는 것으로 여길 수 있다. 이때 허용된 극성 오차의 수는 최적의 단층면해가 가지는 극성 오차의 수에 추가로 #text("nextra", font:"Courier New") 가 더해진 값으로 정의된다. 만일 허용된 극성 오차의 수가 #text("ntotal", font:"Courier New") 보다 적다면, #text("ntotal", font:"Courier New") 이 허용된 극성 오차의 수로 사용될 것이다. 일반적으로, #text("ntotal", font:"Courier New") 은 초동 극성의 총 개수와 네트워크 내 알려진 극성 오차의 비율을 곱하기 때문에, 이를 바탕으로 극성 오차의 수를 예측할 수 있다. 주로 #text("ntotal", font:"Courier New")의 절반인 #text("nextra", font:"Courier New")를 사용한다. S/P 진폭비의 경우, 허용 가능한 $log_10 (S"/"P)$ 오차는 최적의 단층면해가 가지는 오차에 #text("qextra", font:"Courier New") 를 더한 값으로 정의되거나, #text("qtotal", font:"Courier New") 이 이보다 클 경우 #text("qtotal", font:"Courier New") 로 정의된다. 일반적으로 #text("qtotal", font:"Courier New") 은 S/P 진폭비의 총 개수에 평균 불확실성 추정치를 곱한 값이며, #text("qextra", font:"Courier New")는 #text("qtotal", font:"Courier New") 의 절반을 가진다.
+ - #text("dang", font:"Courier New") 은 격자 검색법의 정밀도를 나타내는 매개변수이며, #text("maxout", font:"Courier New") 은 출력되는 허용 가능한 단층면해들의 최대 개수를 설정하는 매개변수이다.
+ - 계산으로부터 얻어낸 허용 가능한 단층면해들의 총 개수는 #text("nf", font:"Courier New") 로 표시되며, 최대 개수는 #text("maxout", font:"Courier New") 으로 제한되어진다. 최종적으로, 각각의 허용 가능한 단층면해에 대해 단층면해에 연관된 매개변수와 두 Nodal plane의 법선 벡터가 출력된다.
+ - #text("FOCALMC", font:"Courier New") 은 P파의 초동 극성만을 이용하여 단층면해를 계산하는 서브루틴이다.
+  #block(fill: luma(230), inset: 8pt, radius: 4pt, [```Fortran
+    subroutine FOCALMC(p_azi_mc, p_the_mc, p_pol, p_qual, npsta, nmc, dang, maxout, nextra, ntotal, nf, strike, 
+                       dip, rake, faults, slips)```
   - Inputs
    #list(marker: ([•]),
   [p_azi_mc(npsta, nmc) : 방위각],
@@ -142,8 +140,7 @@
   [dang : 격자 검색에서의 각도 간격(Degree)],
   [maxout : 반환되는 단층 면의 최대 개수(만약 더 발견된다면, 랜덤한 값이 리턴)],
   [nextra : 허용되는 추가 미스핏의 수],
-  [ntotal : 허용되는 총 미스핏의 최소 개수],
-  )
+  [ntotal : 허용되는 총 미스핏의 최소 개수])
   - Outputs
    #list(marker: ([•]),
    [nf : 찾아낸 단층면해의 수],
@@ -152,13 +149,12 @@
    [rake(min(maxout, nf)) : 미끌림각],
    [faults(3, min(maxout, nf)) : 단층의 법선 벡터],
    [slips(3, min(maxout, nf)) : Slip 벡터],
-   )
- - P파의 초동 극성과 S/P 진폭비를 모두 이용할 경우 `FOCALAMP_MC` 서브루틴을 이용
-  #sourcecode[
-    ```Fortran
-    subroutine FOCALAMP_MC(p_azi_mc, p_the_mc, sp_amp, p_pol, npsta, nmc, dang, maxout, nextra,
-    ntotal, qextra, qtotal, nf, strike, dip, rake, faults, slips)
-    ```]
+   )])
+ - #text("FOCALAMP_MC", font:"Courier New") 은 P파의 초동 극성과 S/P 진폭비를 모두 이용하여 단층면해를 계산하는 서브루틴이다.
+  #block(fill: luma(230), inset: 8pt, radius: 4pt, [```Fortran
+    subroutine FOCALAMP_MC(p_azi_mc, p_the_mc, sp_amp, p_pol, npsta, nmc, dang, maxout, nextra, ntotal, qextra, 
+                           qtotal, nf, strike, dip, rake, faults, slips)
+    ```
   - Inputs
    #list(marker: ([•]),
   [#text("p_azi_mc(npsta, nmc)", font:"Courier New") : 방위각],
@@ -182,8 +178,8 @@
    [#text("rake(min(maxout, nf)", font:"Courier New")) : 미끌림각],
    [#text("faults(3, min(maxout, nf)", font:"Courier New")) : 단층의 법선 벡터],
    [#text("slips(3, min(maxout, nf)", font:"Courier New")) : Slip 벡터],
-   )
-- Computing the preferred, or most probable, mechanism
+   )])
+- 최적의 단층면해 계산
  - 계산으로부터 도출된 단층면해들은 최적의 단층면해를 결정하거나 해의 품질을 결정하는데에 사용됨 \ #zz 최적의 단층면해는 이상치들이 제거된 이후의 적합한 단층면해들로부터 평균으로 계산됨 \ #zz 두 가지의 불확실성이 계산됨 \ #zz 적합한 nodal plane과 최적의 nodal plane 간 RMS 차이와 \ #zz  사용자가 정의한 '가까운' 각도를 기준으로 최적의 단층면해가 실제 단층면해와 '가까운' 정도 \ #zz 이상치 군집이 존재할 시에, 이 이상치들로부터 대체 해가 발견될 수 있고, 이 때 최소 확률을 설정해 확률이 낮은 해는 무시할 수 있음
  #sourcecode[
     ```Fortran
