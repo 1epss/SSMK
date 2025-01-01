@@ -109,7 +109,7 @@
   $ make hash_driverX                   # X = example number 
   
   # 프로그램 실행
-  $ ./hash_driverX                      # 파일이 요구하는 입력값을 직접 입력할 경우
+  $ ./hash_driverX                      # 파일이 요구하는 입력 데이터를 직접 입력할 경우
   $ ./hash_driverX < exampleX.inp       # 컨트롤 파일을 이용하는 경우
   ```], white))
   - 코드가 성공적으로 컴파일 및 실행되었다면, 출력 파일은 제공된 예시와 거의 일치할 것이다. 출력된 결과가 샘플과 완전히 일치하지 않을 수 있는데, 이는 각 몬테카를로 시뮬레이션에 입력 데이터가 무작위로 선택되기 때문에, 난수의 생성에 차이가 발생하게 됨에 따라 차이가 발생하는 것으로 여길 수 있다.
@@ -131,24 +131,24 @@
                        dip, rake, faults, slips)```
   - Inputs
    #list(marker: ([•]),
-  [p_azi_mc(npsta, nmc) : 방위각],
-  [p_the_mc(npsta, nmc) : 출발각],
-  [p_pol(npsta) : 초동 극성(1 = up, -1 = down)],
-  [p_qual(npsta) : 초동 quality(0 = 펄스, 1 = 점진적)],
-  [npsta : 관측한 초동의 수],
-  [nmc : 시도 횟수(주어진 각 관측소에서의 방위각-출발각 쌍의 수)],
-  [dang : 격자 검색에서의 각도 간격(Degree)],
-  [maxout : 반환되는 단층 면의 최대 개수(만약 더 발견된다면, 랜덤한 값이 리턴)],
-  [nextra : 허용되는 추가 미스핏의 수],
-  [ntotal : 허용되는 총 미스핏의 최소 개수])
+  [#text("p_azi_mc(npsta, nmc)", font:"Courier New") : 방위각],
+  [#text("p_the_mc(npsta, nmc)", font:"Courier New") : 출발각],
+  [#text("p_pol(npsta)", font:"Courier New") : P파의 초동 극성(1 = up, -1 = down)],
+  [#text("p_qual(npsta)", font:"Courier New") : P파의 초동 품질(0 = 펄스 신호, 1 = 점진적)],
+  [#text("npsta", font:"Courier New") : 관측한 P파 초동의 수],
+  [#text("nmc", font:"Courier New") : 각 관측소에서 가능한 방위각-출발각 조합의 수로, 계산의 횟수를 의미],
+  [#text("dang", font:"Courier New") : 격자 검색법에서의 각도 간격(Degree)],
+  [#text("maxout", font:"Courier New") : 출력되는 단층 면의 최대 개수로, 값을 초과할 경우 그 중 랜덤한 값이 출력],
+  [#text("nextra", font:"Courier New") : 추가된 극성 오차의 수],
+  [#text("ntotal", font:"Courier New") : 허용 가능한 극성 오차의 최소 개수])
   - Outputs
    #list(marker: ([•]),
-   [nf : 찾아낸 단층면해의 수],
-   [strike(min(maxout, nf)) : 주향],
-   [dip(min(maxout, nf)) : 경사],
-   [rake(min(maxout, nf)) : 미끌림각],
-   [faults(3, min(maxout, nf)) : 단층의 법선 벡터],
-   [slips(3, min(maxout, nf)) : Slip 벡터],
+   [#text("nf", font:"Courier New") : 계산된 단층면해의 수],
+   [#text("strike(min(maxout, nf))", font:"Courier New") : 주향],
+   [#text("dip(min(maxout, nf))", font:"Courier New") : 경사],
+   [#text("rake(min(maxout, nf))", font:"Courier New") : 미끌림각],
+   [#text("faults(3, min(maxout, nf))", font:"Courier New") : 단층면의 법선 벡터],
+   [#text("slips(3, min(maxout, nf))", font:"Courier New") : 단층의 미끄러짐(Slip) 벡터],
    )])
  - #text("FOCALAMP_MC", font:"Courier New") 은 P파의 초동 극성과 S/P 진폭비를 모두 이용하여 단층면해를 계산하는 서브루틴이다.
   #block(fill: luma(230), inset: 8pt, radius: 4pt, [```Fortran
@@ -159,89 +159,94 @@
    #list(marker: ([•]),
   [#text("p_azi_mc(npsta, nmc)", font:"Courier New") : 방위각],
   [#text("p_the_mc(npsta, nmc)", font:"Courier New") : 출발각],
-  [#text("sp_amp(npsta)", font:"Courier New") : 진폭비($log_10 ("S/P")$)],
-  [#text("p_pol(npsta)", font:"Courier New") : 초동 극성(1 = up, -1 = down)],
-  [#text("npsta",font:"Courier New") : 관측한 초동의 수],
-  [#text("nmc",font:"Courier New") : 시도 횟수(주어진 각 관측소에서의 방위각-출발각 쌍의 수)],
-  [#text("dang",font:"Courier New") : 격자 검색에서의 각도 간격(Degree)],
-  [#text("maxout",font:"Courier New") : 반환되는 단층 면의 최대 개수(만약 더 발견된다면, 랜덤한 값이 리턴)],
-  [#text("nextra",font:"Courier New") : 허용되는 추가 극성 미스핏의 수],
-  [#text("ntotal",font:"Courier New") : 허용되는 총 극성 미스핏의 최소 개수],
-  [#text("qextra",font:"Courier New") : 허용되는 추가 진폭  미스핏의 최소 개수],
-  [#text("qtotal",font:"Courier New") : 허용되는 총 진폭 미스핏의 최소 개수],
+  [#text("sp_amp(npsta)", font:"Courier New") : S/P 진폭비($log_10 ("S/P")$)],
+  [#text("p_pol(npsta)", font:"Courier New") : P파의 초동 극성(1 = up, -1 = down)],
+  [#text("npsta",font:"Courier New") : 관측한 P파 초동의 수],
+  [#text("nmc",font:"Courier New") : 각 관측소에서 가능한 방위각-출발각 조합의 수로, 계산의 횟수를 의미],
+  [#text("dang",font:"Courier New") : 격자 검색법에서의 각도 간격(Degree)],
+  [#text("maxout",font:"Courier New") : 출력되는 단층 면의 최대 개수로, 값을 초과할 경우 그 중 랜덤한 값이 출력],
+  [#text("nextra",font:"Courier New") : 추가된 극성 오차의 수],
+  [#text("ntotal",font:"Courier New") : 허용 가능한 극성 오차의 최소 개수],
+  [#text("qextra",font:"Courier New") : 추가된 진폭  오차의 최소 개수],
+  [#text("qtotal",font:"Courier New") : 허용 가능한 진폭 오차의 최소 개수],
   )
   - Outputs
    #list(marker: ([•]),
-   [#text("nf", font:"Courier New") : 찾아낸 단층면해의 수],
+   [#text("nf", font:"Courier New") : 계산된 단층면해의 수],
    [#text("strike(min(maxout, nf)", font:"Courier New")) : 주향],
    [#text("dip(min(maxout, nf)", font:"Courier New")) : 경사],
    [#text("rake(min(maxout, nf)", font:"Courier New")) : 미끌림각],
-   [#text("faults(3, min(maxout, nf)", font:"Courier New")) : 단층의 법선 벡터],
-   [#text("slips(3, min(maxout, nf)", font:"Courier New")) : Slip 벡터],
+   [#text("faults(3, min(maxout, nf)", font:"Courier New")) : 단층면의 법선 벡터],
+   [#text("slips(3, min(maxout, nf)", font:"Courier New")) : 단층의 미끄러짐(Slip) 벡터],
    )])
 - 최적의 단층면해 계산
- - 계산으로부터 도출된 단층면해들은 최적의 단층면해를 결정하거나 해의 품질을 결정하는데에 사용됨 \ #zz 최적의 단층면해는 이상치들이 제거된 이후의 적합한 단층면해들로부터 평균으로 계산됨 \ #zz 두 가지의 불확실성이 계산됨 \ #zz 적합한 nodal plane과 최적의 nodal plane 간 RMS 차이와 \ #zz  사용자가 정의한 '가까운' 각도를 기준으로 최적의 단층면해가 실제 단층면해와 '가까운' 정도 \ #zz 이상치 군집이 존재할 시에, 이 이상치들로부터 대체 해가 발견될 수 있고, 이 때 최소 확률을 설정해 확률이 낮은 해는 무시할 수 있음
- #sourcecode[
-    ```Fortran
+ - 계산으로부터 얻은 단층면해들은 최적의 단층면해 및 해의 품질 추정치를 결정하는데에 사용되며, 최적의 단층면해는 이상치들을 제거한 이후의 허용 가능한 단층면해들의 평균으로부터 얻을 수 있다. 또한 두 가지의 불확실성이 계산될 수 있는데, 허용 가능한 nodal plane과 최적의 nodal plane 사이의 RMS 차이와, 사용자가 정의한 '가까운' 각도를 기준으로 최적의 단층면해가 실제 단층면해와 '가까울' 확률로 나타낼 수 있다. 만약 이상치가 군집의 형태를 가지고 나타난다면, 이 이상치를 기반으로 단층면해의 대안을 찾을 수 있다. 사용자는 이 대안들에 대해 최소 확률을 설정할 수 있어, 낮은 확률을 가지는 해는 무시할 수 있다.
+  #block(fill: luma(230), inset: 8pt, radius: 4pt,
+  [```Fortran
     subroutine MECH_PROB(nf, normlin, norm2in, cangle, str_avg, dip_avg, rak_avg, prob, rms_diff)
-    ```]
-  - input
-   #list(marker: ([•]),
-  [#text("nf") : 단층 면의 수 ],
-  [#text("norm1(3,nf)") : 단층면의 법선 벡터],
-  [#text("norm2(3,nf)") : 보조 단층면의 Slip/법선 vector],
-  [#text("cangle") : cangle 보다 작은 각도를 가질 때, 단층면해가 실제 단층면해와 '가깝다'고 여길 수 있음],
-  [#text("prob_max") : 다수의 해에 대한 최소 확률],)
-  - Output
-   #list(marker: ([•]),
-  [#text("nstln") : 출력되는 해의 개수 ],
-  [#text("str_avg(nstln)") : 각 단층면해의 주향],
-  [#text("dip_avg(nstln)") : 각 단층면해의 경사],
-  [#text("rak_avg(nstln)") : 각 단층면해의 미끌림각],
-  [#text("prob(nstln)") : 해의 평균에 '가까운' 해들의 비율],
-  [#text("rms_diff(2,nstln)") : 모든 단층면의 평균 단층면에 대한 RMS 각 오차(1 = 주단층면, 2 = 보조단층면)],)
-- Computing the data misfit for the preferred mech
- - 최적의 단층면해를 찾는 마지막 과정은 데이터의 미스핏을 찾는 것 \ #zz P파의 초동 극성과 함께 S/P 진폭비가 사용되는지 여부에 따라 별개의 유사한 서브루틴이 사용됨 \ #zz 입력값으로는 관측소 별 초동 극성과 진폭비, 방위각과 출발각, 최적의 메커니즘을 이용 \ #zz 출력값은 극성 미스핏의 가중치 비율 #text("mfrac", font: "Courier New"), 관측소의 분포 비율 #text("stdr", font: "Courier New") \ #zz 만약 S/P 진폭비가 사용되면 평균 $log_10 ("S/P")$ 미스핏이 #text("mavg", font: "Courier New") 로 출력
- - P파의 초동 극성만 이용할 경우 `GET_MISF` 서브루틴을 이용하며, 다음과 같은 입/출력값을 가짐
- #sourcecode[
-    ```Fortran
-    subroutine GET_MISF(npol, p_azi_mc, p_the_mc, p_pol, p_qual, str_avg, dip_avg, rak_avg, mfrac, stdr)
-    ```]
- - Inputs
-   #list(marker: ([•]),
-  [#text("npol", font:"Courier New") : 초동 극성의 개수],
-  [#text("p_azi_mc(npol)", font:"Courier New") : 방위각],
-  [#text("p_the_mc(npol)", font:"Courier New") : 출발각],
-  [#text("p_pol(npol)", font:"Courier New") : 초동 극성],
-  [#text("p_qual(npol)", font:"Courier New") : 초동 극성의 품질],
-  [#text("str_avg, dip_avg, rak_avg", font:"Courier New") : 최적의 메커니즘],)
- - Outputs
-   #list(marker: ([•]),
-  [#text("mfrac", font:"Courier New") : 극성 미스핏의 가중치 비율],
-  [#text("stdr", font:"Courier New") : 관측소 분포 비율],)
- - P파의 초동 극성과 S/P 진폭비를 모두 이용할 경우 `GET_MISF_AMP` 서브루틴을 이용
- #sourcecode[
-    ```Fortran
-    subroutine GET_MISF_AMP(npol, p_azi_mc, p_the_mc, sp_ratio, p_pol, str_avg, dip_avg, rak_avg, mfrac, mavg, stdr)
-    ```]
+    ```
   - Inputs
    #list(marker: ([•]),
-  [#text("npol", font:"Courier New") : 초동 극성의 개수],
+  [#text("nf", font :"Courier New") : 단층면의 수 ],
+  [#text("norm1(3,nf)" ,font :"Courier New") : 단층면의 법선 벡터],
+  [#text("norm2(3,nf)",font :"Courier New") : 단층의 미끄러짐(Slip) 벡터],
+  [#text("cangle",font :"Courier New") : cangle 보다 작은 각도를 가질 때, 단층면해가 실제 단층면해와 '가깝다'고 여길 수 있음],
+  [#text("prob_max", font :"Courier New") : 대안 해들에 대한 최소(차단)) 확률])
+  - Outputs
+   #list(marker: ([•]),
+  [#text("nstln", font :"Courier New") : 출력되는 해의 개수],
+  [#text("str_avg(nstln)", font :"Courier New") : 각 단층면해의 주향],
+  [#text("dip_avg(nstln)", font :"Courier New") : 각 단층면해의 경사],
+  [#text("rak_avg(nstln)", font :"Courier New") : 각 단층면해의 미끌림각],
+  [#text("prob(nstln)", font :"Courier New") : 최적의 단층면해가 실제 단층면해와 '가까울' 확률],
+  [#text("rms_diff(2,nstln)", font :"Courier New") : 허용 가능한 nodal plane과 최적의 nodal plane 사이의 RMS 차이(1 = 주단층면, 2 = 보조단층면)])])
+- 최적의 단층면해에 대한 데이터 오차 계산
+ - 단층면해를 계산의 마지막 과정은 최적의 단층면에 대한 데이터의 오차를 찾는 것이다. 계산 과정에 S/P 진폭비를 P파의 초동 극성과 함께 사용할 것인지 여부에 따라 별개의 유사한 서브루틴이 사용될 수 있다. 입력 데이터로는 관측소 별 P파의 초동 극성(과 S/P 진폭비), 방위각, 출발각(이전 과정과 달리 최적의 조합 하나만을 사용)과 최적의 단층면해를 이용한다. 출력되는 데이터는 초동 극성의 가중 오차 #text("mfrac", font: "Courier New"), 관측소 분포비 #text("stdr", font: "Courier New") 이다. 만약 S/P 진폭비가 사용된다면, 계산된 평균 $log_10 ("S/P")$ 오차가 #text("mavg", font: "Courier New") 로 출력되어진다.
+ - #text("GET_MISF", font:"Courier New") 은 P파의 초동 극성만을 이용하여 오차를 계산하는 서브루틴이다.
+  #block(fill: luma(230), inset: 8pt, radius: 4pt,
+  [```Fortran
+    subroutine GET_MISF(npol, p_azi_mc, p_the_mc, p_pol, p_qual, str_avg, dip_avg, rak_avg, mfrac, stdr)
+    ```
+  - Inputs
+   #list(marker: ([•]),
+  [#text("npol", font:"Courier New") : 관측한 P파 초동 극성의 수],
   [#text("p_azi_mc(npol)", font:"Courier New") : 방위각],
   [#text("p_the_mc(npol)", font:"Courier New") : 출발각],
-  [#text("sp_ratio(npol)", font:"Courier New") : S/P 진폭비],
-  [#text("p_pol(npol)", font:"Courier New") : 초동 극성],
+  [#text("p_pol(npol)", font:"Courier New") : P파의 초동 극성],
+  [#text("p_qual(npol)", font:"Courier New") : P파의 초동 품질],
   [#text("str_avg, dip_avg, rak_avg", font:"Courier New") : 최적의 메커니즘],)
   - Outputs
    #list(marker: ([•]),
-  [#text("mfrac", font:"Courier New") : 극성 미스핏의 가중치 비율],
-  [#text("mavg", font:"Courier New") : 평균 $log_10 ("S/P")$ 미스핏],
-  [#text("stdr", font:"Courier New") : 관측소 분포 비율],)
+  [#text("mfrac", font:"Courier New") : 초동 극성의 가중 오차],
+  [#text("stdr", font:"Courier New") : 관측소 분포비],)
+   ])
+ - #text("GET_MISF_AMP", font:"Courier New") 은 P파의 초동 극성과 S/P 진폭비를 모두 이용하여 오차를 계산하는 서브루틴이다.
+ #block(fill: luma(230), inset: 8pt, radius: 4pt,
+  [```Fortran
+    subroutine GET_MISF_AMP(npol, p_azi_mc, p_the_mc, sp_ratio, p_pol, str_avg, dip_avg, rak_avg, mfrac, mavg, stdr)
+    ```
+  - Inputs
+   #list(marker: ([•]),
+  [#text("npol", font:"Courier New") : 관측한 P파 초동 극성의 개수],
+  [#text("p_azi_mc(npol)", font:"Courier New") : 방위각],
+  [#text("p_the_mc(npol)", font:"Courier New") : 출발각],
+  [#text("sp_ratio(npol)", font:"Courier New") : S/P 진폭비],
+  [#text("p_pol(npol)", font:"Courier New") : P파의 초동 극성],
+  [#text("str_avg, dip_avg, rak_avg", font:"Courier New") : 최적의 메커니즘],)
+  - Outputs
+   #list(marker: ([•]),
+  [#text("mfrac", font:"Courier New") : 초동 극성의 가중 오차],
+  [#text("mavg", font:"Courier New") : 평균 $log_10 ("S/P")$ 오차],
+  [#text("stdr", font:"Courier New") : 관측소 분포비],)])
+#pagebreak()
 == Input and Data Preparation:
 
+
+#pagebreak()
 == Include Files:
 
 
+#pagebreak()
 == Output:
 
 
